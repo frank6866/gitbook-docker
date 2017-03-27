@@ -189,7 +189,7 @@ $ sudo systemctl enable kube-apiserver kube-scheduler kube-controller-manager
 $ sudo systemctl start kube-apiserver kube-scheduler kube-controller-manager
 ```
 
-
+sudo systemctl restart kube-apiserver kube-scheduler kube-controller-manager
 
 
 ## node安装与配置
@@ -295,4 +295,21 @@ $ sudo systemctl start flanneld docker
 
 ## 验证
 
-TODO
+
+master结点上验证
+
+```
+$ kubectl cluster-info
+Kubernetes master is running at http://localhost:8080
+```
+
+
+
+
+
+
+
+
+
+
+
