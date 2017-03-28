@@ -59,9 +59,37 @@ cannot get replicationcontrollers in project "spark-cluster"
 2. 对应的用户是不是没有权限进行该操作
 
 
+TODO: 这个问题很奇怪,通过CLI方式创建app报上面的异常;但是通过web console并没有上面的异常。
+思路:
+
+1. cli不成功,webconsole成功,看可不可以通过抓包看看两个请求里面参数是不是有区别;可能遇到的问题,webconsole使用https,不一定能抓到。
+2. 看输出发现warning:"No Docker registry has been configured with the server", 会不会和docker hub配置相关?
 
 
 
+
+## Crash loop back off
+部署mysql的时候报错。
+
+解决过程:
+
+### 查看日志
+在web console中,依次进入"Applications" -> "Deployments" -> 找到对应的Deployment Nanme那一行 -> 点击"Last Version"一行的"#1" -> 切换到logs标签,查看日志。
+
+### 分析日志
+日志的内容如下:
+
+```
+error: database is uninitialized and password option is not specified
+  You need to specify one of MYSQL_ROOT_PASSWORD, MYSQL_ALLOW_EMPTY_PASSWORD and MYSQL_RANDOM_ROOT_PASSWORD
+```
+
+可以看到,是没有设置变量引起的
+
+### 设置变量
+在web console中,依次进入"Applications" -> "Deployments" -> 找到对应的Deployment Nanme那一行 -> 点击deployment的名称进入该deployment。
+
+切换到"Environment"标签, 添加环境变量(key为"MYSQL_ROOT_PASSWORD",value自定义)并保存,会自动触发deployment;等一小会,deployment成功。
 
 
 

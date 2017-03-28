@@ -320,7 +320,7 @@ Use "oc options" for a list of global command-line options (applies to all comma
 
 
 ### demo
-
+oc new-project tutorial --display-name="openshift tutorial" --description="This is a tutorial project in openshift"
 
 
 ## new-app         
@@ -466,19 +466,6 @@ whoami
   Project: openshift
   Template for deploying registry web console. Requires cluster-admin.
 ```
-
-
-
-
-
-
-Create a new application based on a Node.js image on the Docker Hub:
-
-```
-oc new-app openshift/deployment-example
-
-```
-
 
 
 
