@@ -294,22 +294,11 @@ $ sudo systemctl start flanneld docker
 
 
 ## 验证
-
-
 master结点上验证
 
 ```
 $ kubectl cluster-info
 Kubernetes master is running at http://localhost:8080
 ```
-
-
-
-
-
-
-
-
-
 
 

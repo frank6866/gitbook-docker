@@ -70,3 +70,38 @@ systemctl daemon-reload
 systemctl enable docker openshift-slave
 systemctl start docker
 systemctl start openshift-slave
+
+
+
+
+
+
+# vagrant
+初始化配置文件(2017.3月vagrant上该box中OpenShift最新版是v1.3.0.rc1)
+
+```
+➜  vagrant init openshift/origin-all-in-one
+A `Vagrantfile` has been placed in this directory. You are now
+ready to `vagrant up` your first virtual environment! Please read
+the comments in the Vagrantfile as well as documentation on
+`vagrantup.com` for more information on using Vagrant.
+```
+
+
+启动镜像(会自动下载box,box大小2.69G,下载速度1MB/s,耗时50min左右)
+
+> ➜  vagrant up --provider virtualbox
+
+如果默认使用virtualbox,可以不加--provider选项,如下:
+
+> ➜  vagrant up
+
+
+
+
+
+
+
+
+
+
