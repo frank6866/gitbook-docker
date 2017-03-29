@@ -17,6 +17,6 @@
 * [openshift](chapters/openshift/openshift-intro.md)
     * [openshift](chapters/openshift/openshift-install.md)
     * [oc](chapters/openshift/openshift-oc.md)
-    * [openshift-spark](chapters/openshift/openshift-spark.md)
+    * [实时监控数据分析平台](chapters/openshift/openshift-realtime-monitor-analysis.md)
     * [异常](chapters/openshift/openshift-exception.md)
 
