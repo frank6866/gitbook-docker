@@ -7,14 +7,14 @@
     * [命令](chapters/docker/docker-command.md)
 
 -----
-* [k8s](chapters/k8s/k8s-introduction.md)
-    * [安装](chapters/k8s/k8s-install.md)
-    * [简单玩一下](chapters/k8s/k8s-tutorial.md)
-    * [kubectl](chapters/k8s/k8s-kubectl.md)
-    * [配置](chapters/k8s/k8s-configuration.md)
-    * [日志](chapters/k8s/k8s-logging.md)
-    * [监控](chapters/k8s/k8s-monitor.md)
-    * [异常整理](chapters/k8s/k8s-exception.md)
+* [kubernetes](chapters/kubernetes/kubernetes-introduction.md)
+    * [安装](chapters/kubernetes/kubernetes-install.md)
+    * [简单玩一下](chapters/kubernetes/kubernetes-tutorial.md)
+    * [kubectl](chapters/kubernetes/kubernetes-kubectl.md)
+    * [配置](chapters/kubernetes/kubernetes-configuration.md)
+    * [日志](chapters/kubernetes/kubernetes-logging.md)
+    * [监控](chapters/kubernetes/kubernetes-monitor.md)
+    * [异常整理](chapters/kubernetes/kubernetes-exception.md)
 
 -----
 * [openshift](chapters/openshift/openshift-intro.md)
