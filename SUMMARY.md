@@ -2,6 +2,9 @@
 
 * [Introduction](README.md)
 * [Docker](chapters/docker/docker-introduction.md)
+    * [安装](chapters/docker/docker-install.md)
+    * [容器状态变迁](chapters/docker/docker-container-transition.md)
+    * [命令](chapters/docker/docker-command.md)
 
 -----
 * [k8s](chapters/k8s/k8s-introduction.md)
@@ -19,4 +22,5 @@
     * [oc](chapters/openshift/openshift-oc.md)
     * [实时监控数据分析平台](chapters/openshift/openshift-realtime-monitor-analysis.md)
     * [异常](chapters/openshift/openshift-exception.md)
+    * [rest](chapters/openshift/openshift-rest.md)
 
