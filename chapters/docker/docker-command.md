@@ -306,6 +306,9 @@ Options:
 
 
 # 容器管理
+## docker create(创建容器)
+一般使用docker run(包含create和start)
+
 ## docker run(启动容器)
 ### usage
 ```
@@ -420,6 +423,24 @@ Options:
 # docker run -d --name frontend docker.io/nginx:latest
 ```
 
+容器默认使用其id作为主机名，如果想自定义主机名，可以使用-h选项(或者--hostname)指定容器的主机名，比如，启动一个容器设置主机名为tutorial-01:  
+
+```
+# docker run -d --name backend -h tutorial-01 docker.io/nginx:latest
+```
+
+将镜像定好的端口随机映射到宿主机的端口上(使用-P选项):  
+
+```
+# docker run -d -P docker.io/nginx:latest
+```
+
+将容器的80端口映射到宿主机的8001端口，容器的443端口映射到主机的8082端口(使用-p选项):  
+
+```
+# docker run -d -p "8081:80" -p "8082:443" docker.io/nginx:latest
+```
+
 
 ## docker ps(查看容器列表)
 ### usage
@@ -447,10 +468,10 @@ docker ps命令默认只会列出状态为running的容器，如果想查看处�
 
 ```
 # docker ps -a
-CONTAINER ID        IMAGE                    COMMAND                  CREATED             STATUS                      PORTS               NAMES
-d1b07fe77248        docker.io/nginx:latest   "nginx -g 'daemon off"   27 seconds ago      Up 26 seconds               80/tcp, 443/tcp     frontend
-87def2fb11bc        docker.io/nginx:latest   "nginx -g 'daemon off"   24 minutes ago      Up 24 minutes               80/tcp, 443/tcp     pensive_goodall
-d126928243db        docker.io/nginx:latest   "nginx -g 'daemon off"   32 minutes ago      Exited (0) 25 minutes ago                       lonely_hopper
+CONTAINER ID        IMAGE                    COMMAND                  CREATED              STATUS                      PORTS                                           NAMES
+95d45968eb17        docker.io/nginx:latest   "nginx -g 'daemon off"   3 seconds ago        Up 2 seconds                80/tcp, 443/tcp                                 tender_knuth
+4556cf56bf5d        docker.io/nginx:latest   "nginx -g 'daemon off"   About a minute ago   Exited (0) 39 seconds ago                                                   hungry_hoover
+029260cd98e3        docker.io/nginx:latest   "nginx -g 'daemon off"   About a minute ago   Up About a minute           0.0.0.0:32769->80/tcp, 0.0.0.0:32768->443/tcp   dreamy_mclean
 ```
 
 * CONTAINER ID: container的id
@@ -458,7 +479,7 @@ d126928243db        docker.io/nginx:latest   "nginx -g 'daemon off"   32 minutes
 * COMMAND: 启动容器时使用的命令
 * CREATED: 容器创建的时间
 * STATUS: 容器的状态，UP表示running
-* PORTS: 容器对外暴露的端口
+* PORTS: 容器对外暴露的端口(如果启动容器的时候没有会用-p或者-P选项，PORTS表示的是镜像EXPOSE的端口；如果启动容器的时候使用了-p或者-P选项，PORTS表示主机端口到容器端口的映射,0.0.0.0:32769->80/tcp表示的是宿主机所有网段的tcp 32769端口映射到容器的80端口)
 * NAMES: 容器的名称，如果创建容器的时候不使用--name选项，会随机生成一个容器名称
 
 
@@ -483,8 +504,58 @@ Return low-level information on a container, image or task
   --type             Return JSON for specified type, (e.g image, container or task)
 ```  
 
-### demo
 
+
+## docker stop(停止容器)
+### usage
+```
+# docker stop --help
+
+Usage:	docker stop [OPTIONS] CONTAINER [CONTAINER...]
+
+Stop one or more running containers
+
+Options:
+      --help       Print usage
+  -t, --time int   Seconds to wait for stop before killing it (default 10)
+```  
+
+### demo
+停止id为080f7a076470的容器
+
+```
+# docker stop 080f7a076470
+```
+
+停止容器后，容器的状态为exited。  
+
+
+## docker start(启动容器)
+### usage
+```
+# docker start --help
+
+Usage:	docker start [OPTIONS] CONTAINER [CONTAINER...]
+
+Start one or more stopped containers
+
+Options:
+  -a, --attach               Attach STDOUT/STDERR and forward signals
+      --detach-keys string   Override the key sequence for detaching a container
+      --help                 Print usage
+  -i, --interactive          Attach container's STDIN
+```
+
+### demo
+启动id为080f7a076470的容器
+
+```
+# docker start 080f7a076470
+```
+
+在运行的容器中对文件做的变更，停止容器后重启容器，变更还存在。
+
+比如在运行的容器中创建一个文件/test.txt，停止容器后重新启动容器，/test.txt文件还在。
 
 
 ## docker rm(删除容器)

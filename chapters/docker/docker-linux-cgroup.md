@@ -222,7 +222,7 @@ total 0
 ```
 
 
-其中/sys/fs/cgroup/memory/bar/tasks里面存放的是这个组里面进程的pid。
+其中/sys/fs/cgroup/memory/bar/tasks里面存放的是这个组里面进程的pid(进程退出后，响应的pid就不在这个文件里了)。
 
 
 以root用户删除为什么报Permission Denied
@@ -251,34 +251,53 @@ total 0
 
 
 
-```
-
-030CGroup
-
-在/etc/cgconfig.d目录下，将docker组重命名为app组，此时使用docker组会报错吗？需要执行？命令才不会报错；执行lscgroup命令，还会看到docker组吗？重启之后还能看到docker组吗？
-查看所有cgroup的命令是？
-cgroup默认挂载在？目录下。
-在blkio的cgroup目录下，创建一个foo的目录，里面会自动生成文件吗？
-对于一个名为blkio:/foo的cgroup，其所在的目录是？。
-每个cgroup下都有一个？文件，存放的是在这个cgroup中运行的进程的进程号。进程退出后，PID还在这个文件里吗？
 
 
-会、systemctl restart cgconfig、会、不能
-lscgroup
-/sys/fs/cgroup
-会
-/sys/fs/cgroup/blkio/foo
-tasks、不在了
 
+
+
+
+
+# cgroup在docker中的使用
+比如,启动了一个容器,其id为efe5a358924e,如下:
 
 ```
+# docker ps
+CONTAINER ID        IMAGE                    COMMAND                  CREATED             STATUS              PORTS                                         NAMES
+efe5a358924e        docker.io/nginx:latest   "nginx -g 'daemon off"   14 minutes ago      Up 14 minutes       0.0.0.0:8081->80/tcp, 0.0.0.0:8082->443/tcp   tender_mcnulty
+```
 
+查看启动该容器的进程,可以知道容器id的全写是efe5a358924ea97dce9d0e0718851964b337d6acbe7ea35c827393bf224b351b
 
+```
+# ps -ef | grep efe5a358924e
+root     15583 30973  0 15:33 ?        00:00:00 /usr/bin/docker-containerd-shim-current efe5a358924ea97dce9d0e0718851964b337d6acbe7ea35c827393bf224b351b /var/run/docker/libcontainerd/efe5a358924ea97dce9d0e0718851964b337d6acbe7ea35c827393bf224b351b /usr/libexec/docker/docker-runc-current
+root     15662 14263  0 15:49 pts/0    00:00:00 grep --color=auto efe5a358924e
+```
 
+这里以memory子系统为例,在/sys/fs/cgroup/memory/system.slice/目录下找到容器对应的cgroup
 
+```
+# ls -l /sys/fs/cgroup/memory/system.slice/ | grep efe5a358924e
+drwxr-xr-x. 2 root root 0 Apr 13 15:33 docker-efe5a358924ea97dce9d0e0718851964b337d6acbe7ea35c827393bf224b351b.scope
+```
 
+查看cgroup中的tasks文件
 
+```
+# cat /sys/fs/cgroup/memory/system.slice/docker-efe5a358924ea97dce9d0e0718851964b337d6acbe7ea35c827393bf224b351b.scope/tasks
+15599
+15622
+```
 
+根据pid查看cgroup是应用在哪几个进程上的,可以发现,docker容器本质上是宿主机里面的进程,容器里面的进程是在宿主机里运行的。
+
+```
+# ps -f -p 15599 15622
+UID        PID  PPID  C STIME TTY      STAT   TIME CMD
+root     15599 15583  0 15:33 ?        Ss     0:00 nginx: master process nginx -g daemon off;
+104      15622 15599  0 15:33 ?        S      0:00 nginx: worker process
+```
 
 
 

@@ -3,9 +3,10 @@
 * [Introduction](README.md)
 * [Docker](chapters/docker/docker-introduction.md)
     * [安装](chapters/docker/docker-install.md)
-    * [容器状态变迁](chapters/docker/docker-container-transition.md)
     * [命令](chapters/docker/docker-command.md)
-    * [CGroup](chapters/docker/linux-cgroup.md)
+    * [容器状态变迁](chapters/docker/docker-container-transition.md)
+    * [Namespace](chapters/docker/docker-linux-namespace.md)
+    * [CGroup](chapters/docker/docker-linux-cgroup.md)
 
 -----
 * [kubernetes](chapters/kubernetes/kubernetes-introduction.md)
