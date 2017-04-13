@@ -38,7 +38,7 @@ node在早期的版本中称为Minion，是Kubernetes里面干活的角色，每
 
 
 ## pod
-pod(豆荚)是Kubernetes中最小的部署单元(部署单元是指可以被Kubernetes创建、调度和管理的单元)。
+pod(豆荚，很形象的比喻，里面的豆子就是容器)是Kubernetes中最小的部署单元(部署单元是指可以被Kubernetes创建、调度和管理的单元)。
 
 ## label
 label是附加到pod上的键值对，用来传递用户自定义的属性。

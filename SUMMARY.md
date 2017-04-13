@@ -5,6 +5,7 @@
     * [安装](chapters/docker/docker-install.md)
     * [容器状态变迁](chapters/docker/docker-container-transition.md)
     * [命令](chapters/docker/docker-command.md)
+    * [CGroup](chapters/docker/linux-cgroup.md)
 
 -----
 * [kubernetes](chapters/kubernetes/kubernetes-introduction.md)
