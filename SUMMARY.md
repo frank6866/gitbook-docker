@@ -5,6 +5,8 @@
     * [安装](chapters/docker/docker-install.md)
     * [命令](chapters/docker/docker-command.md)
     * [容器状态变迁](chapters/docker/docker-container-transition.md)
+    * [busybox](chapters/docker/docker-busybox.md)
+    * [chroot](chapters/docker/docker-linux-chroot.md)
     * [Namespace](chapters/docker/docker-linux-namespace.md)
     * [CGroup](chapters/docker/docker-linux-cgroup.md)
 

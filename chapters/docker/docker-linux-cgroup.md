@@ -56,6 +56,136 @@ cgroup与进程在以下两点上相似:
 
 有区别的地方在于cgroup中可以有多个层级(如果把进程理解为一棵树的话，cgroup可以看成一个森林)
 
+
+## hierarchy实践
+上面说的有点抽象，直接看看hierarchy在Linux中的体现:  
+
+在Linux中mount一个cgroup类型的文件系统时，就创建了一个hierarchy，可以使用mount查看系统中的hierarchy:  
+
+### 查看hierarchy
+```
+# mount | grep cgroup
+tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,seclabel,mode=755)
+cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,name=systemd)
+cgroup on /sys/fs/cgroup/cpuset type cgroup (rw,nosuid,nodev,noexec,relatime,cpuset)
+cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,cpuacct,cpu)
+cgroup on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,memory)
+cgroup on /sys/fs/cgroup/devices type cgroup (rw,nosuid,nodev,noexec,relatime,devices)
+cgroup on /sys/fs/cgroup/freezer type cgroup (rw,nosuid,nodev,noexec,relatime,freezer)
+cgroup on /sys/fs/cgroup/net_cls type cgroup (rw,nosuid,nodev,noexec,relatime,net_cls)
+cgroup on /sys/fs/cgroup/blkio type cgroup (rw,nosuid,nodev,noexec,relatime,blkio)
+cgroup on /sys/fs/cgroup/perf_event type cgroup (rw,nosuid,nodev,noexec,relatime,perf_event)
+cgroup on /sys/fs/cgroup/hugetlb type cgroup (rw,nosuid,nodev,noexec,relatime,hugetlb)
+```
+
+除了第一个tmpfs，其它的都是hierarchy。以挂载点/sys/fs/cgroup/memory为例，这个层级挂载在/sys/fs/cgroup/memory目录下，/sys/fs/cgroup/memory目录下的每个目录都是一个cgroup。
+
+```
+# tree -d /sys/fs/cgroup/memory/
+/sys/fs/cgroup/memory/
+├── bar
+│   └── in_bar
+├── foo
+├── system.slice
+│   ├── auditd.service
+│   ├── _cgroup.mount
+│   ├── cgroup-my_mem.mount
+│   ├── chronyd.service
+│   ├── cloud-config.service
+│   ├── cloud-final.service
+│   ├── cloud-init-local.service
+│   ├── cloud-init.service
+│   ├── crond.service
+│   ├── dbus.service
+│   ├── dev-hugepages.mount
+│   ├── dev-mqueue.mount
+│   ├── docker-efe5a358924ea97dce9d0e0718851964b337d6acbe7ea35c827393bf224b351b.scope
+│   ├── docker.service
+......
+│   └── zookeeper-server.service
+└── user.slice
+```
+
+比如/sys/fs/cgroup/memory/bar是层级中的一个cgroup；/sys/fs/cgroup/memory/bar/in_bar也是一个cgroup，它是/sys/fs/cgroup/memory/bar的子cgroup。
+
+
+### 创建hierarchy
+
+
+
+
+
+
+##ERROR
+下面的理解有误
+
+当mount一个类型为tmpfs的文件系统时(还有一点是在这个文件系统的目录下挂载类型为cgroup类型的文件系统)，就创建了一个层级。  
+### 查看层级
+查看系统中已有的层级:  
+
+```
+# mount | grep tmpfs
+devtmpfs on /dev type devtmpfs (rw,nosuid,seclabel,size=2006596k,nr_inodes=501649,mode=755)
+tmpfs on /dev/shm type tmpfs (rw,nosuid,nodev,seclabel)
+tmpfs on /run type tmpfs (rw,nosuid,nodev,seclabel,mode=755)
+tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,seclabel,mode=755)
+tmpfs on /run/user/985 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=404764k,mode=700,uid=985,gid=982)
+tmpfs on /run/user/995 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=404764k,mode=700,uid=995,gid=993)
+tmpfs on /run/user/987 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=404764k,mode=700,uid=987,gid=984)
+tmpfs on /run/user/1000 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=404764k,mode=700,uid=1000,gid=1000)
+
+# mount | grep cgroup
+tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,seclabel,mode=755)
+cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,name=systemd)
+cgroup on /sys/fs/cgroup/cpuset type cgroup (rw,nosuid,nodev,noexec,relatime,cpuset)
+cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,cpuacct,cpu)
+cgroup on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,memory)
+cgroup on /sys/fs/cgroup/devices type cgroup (rw,nosuid,nodev,noexec,relatime,devices)
+cgroup on /sys/fs/cgroup/freezer type cgroup (rw,nosuid,nodev,noexec,relatime,freezer)
+cgroup on /sys/fs/cgroup/net_cls type cgroup (rw,nosuid,nodev,noexec,relatime,net_cls)
+cgroup on /sys/fs/cgroup/blkio type cgroup (rw,nosuid,nodev,noexec,relatime,blkio)
+cgroup on /sys/fs/cgroup/perf_event type cgroup (rw,nosuid,nodev,noexec,relatime,perf_event)
+cgroup on /sys/fs/cgroup/hugetlb type cgroup (rw,nosuid,nodev,noexec,relatime,hugetlb)
+```
+
+1. 每一个层级都是tmpfs类型的文件系统(但是tmpfs类型的文件系统不一定是一个层级)，所以先用mount | grep tmpfs看看有哪些可能的层级。
+2. 然后使用mount | grep cgroup看看有哪些cgroup类型的文件系统，如果cgroup类型文件系统的挂载点路径包含tmpfs的路径，那对应的tmpfs就是一个层级；
+3. 比如/sys/fs/cgroup/systemd目录挂载的文件系统类型为cgroup，并且/sys/fs/cgroup/systemd包含挂载点为/sys/fs/cgroup的tmpfs类型的文件系统；所以/sys/fs/cgroup是一个层级结构(好比一棵树，可能有多个树)
+
+
+
+### 创建层级
+创建一个层级的方法是创建一个目录，并在上面挂载tmpfs类型的文件系统。  
+
+```
+# mkdir /cgroup
+# mount -t tmpfs my_cgroups /cgroup
+```
+
+上面的命令创建了一个名为my_cgroups的层级，在层级中创建cgroup就是在层级对应的目录下创建目录，然后在这个目录上挂载cgroup类型的文件系统。比如，在my_cgroups层级下创建一个名为cpu_and_mem的cgroup:  
+
+```
+# mkdir /cgroup/cpu_and_mem
+# mount -t cgroup -o cpu,cpuset,memory cpu_and_mem /cgroup/cpu_and_mem
+
+```
+
+
+
+mkdir /cgroup/my_mem
+mount -t cgroup -o memory my_mem /cgroup/my_mem
+
+为什么/cgroup/my_mem目录的内容和/sys/fs/cgroup/memory的目录内容一样
+
+卸载后重新挂载失败
+```
+# umount /cgroup/my_mem
+# mount -t cgroup -o memory my_mem /cgroup/my_mem
+
+
+```
+
+
 ## subsystem(子系统)简介
 
 cgroup本省并没有提供资源隔离的功能，而是通过子系统(也叫控制器)来实现资源隔离的。可以通过如下的方式查看内核使用了哪些子系统:  
@@ -265,14 +395,6 @@ total 0
 # docker ps
 CONTAINER ID        IMAGE                    COMMAND                  CREATED             STATUS              PORTS                                         NAMES
 efe5a358924e        docker.io/nginx:latest   "nginx -g 'daemon off"   14 minutes ago      Up 14 minutes       0.0.0.0:8081->80/tcp, 0.0.0.0:8082->443/tcp   tender_mcnulty
-```
-
-查看启动该容器的进程,可以知道容器id的全写是efe5a358924ea97dce9d0e0718851964b337d6acbe7ea35c827393bf224b351b
-
-```
-# ps -ef | grep efe5a358924e
-root     15583 30973  0 15:33 ?        00:00:00 /usr/bin/docker-containerd-shim-current efe5a358924ea97dce9d0e0718851964b337d6acbe7ea35c827393bf224b351b /var/run/docker/libcontainerd/efe5a358924ea97dce9d0e0718851964b337d6acbe7ea35c827393bf224b351b /usr/libexec/docker/docker-runc-current
-root     15662 14263  0 15:49 pts/0    00:00:00 grep --color=auto efe5a358924e
 ```
 
 这里以memory子系统为例,在/sys/fs/cgroup/memory/system.slice/目录下找到容器对应的cgroup
