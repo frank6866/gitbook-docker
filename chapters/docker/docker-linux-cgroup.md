@@ -73,6 +73,8 @@ cgroup on /sys/fs/cgroup/hugetlb type cgroup (rw,nosuid,nodev,noexec,relatime,hu
 对于cgroup类型的文件系统，通过子系统来区分hierarchy，子系统不一样就是不同的hierarchy。比如/sys/fs/cgroup/systemd是一个层级，/sys/fs/cgroup/memory也是一个层级。
 
 
+
+
 以/sys/fs/cgroup/memory这个hierarchy为例，这个hierarchy挂载在/sys/fs/cgroup/memory目录下，层级/sys/fs/cgroup/memory目录下的每个目录都是一个cgroup。
 
 ```
