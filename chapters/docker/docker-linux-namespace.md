@@ -5,8 +5,6 @@ namespace是linux kernel提供的一种为一系列进程提供隔离的资源(�
 
 namespace一个常见的用途是实现容器化技术，比如Docker。  
 
-
-
 ## 查看是否支持namespace
 查看kernel是否支持namespace
 
@@ -17,8 +15,8 @@ namespace一个常见的用途是实现容器化技术，比如Docker。
 如果输出"CONFIG_USER_NS=y"就表示支持namespace。  
 
 
-## 分类
-查看内核支持哪些namespace，找到clone 命令的online manual([http://man7.org/linux/man-pages/man2/clone.2.html](http://man7.org/linux/man-pages/man2/clone.2.html))，搜索CLONE_NEW字符，可以找到所有支持的namespace。如下:  
+查看内核支持哪些namespace:   
+找到clone 命令的online manual([http://man7.org/linux/man-pages/man2/clone.2.html](http://man7.org/linux/man-pages/man2/clone.2.html))，搜索CLONE_NEW字符，可以找到所有支持的namespace。如下:  
 
 | namespace | clone_flag | 开始支持的kernel版本 | 隔离内容
 | --------- | ---------- | ------------------ | -------
@@ -29,7 +27,6 @@ namespace一个常见的用途是实现容器化技术，比如Docker。
 | PID | CLONE_NEWPID | 2.6.24 | Process IDs  
 | User | CLONE_NEWUSER | 2.6.23 |  User and group IDs
 | UTS | CLONE_NEWUTS | 2.6.19 | Hostname and NIS domain name
-
 
 
 # namespace API
@@ -78,18 +75,82 @@ unshare()系统调用使某进程脱离某个namespace。
 
 
 
-# demo
-## UTS namespace
-Unix Time-sharing System。
+
+# 各种命名空间
+不同类型的命名空间之间没有关系,我们分析问题的时候需要确定某类命名空间。
+
+比如两个进程在同一个pid命名空间,那他们的pid命名空间的编号都是number1;在同一个mount命名空间,那他们的mount命名空间编号是number2.
+number1和number2没有关系。
+
+
+比如，查看pid为1和2的两个进程，他们对应的命名空间的编号是一样的，那他们就在一个命名空间里面。(注意ipc、mnt等的编号不是一样的，因为虽然都是命名空间，但是类型不一样)。
+
+进程可以加入全部的命名空间，也可以不加入某个命名空间；但是对于某类型的命名空间，只能加入一个。  
+
+```
+# ls -l /proc/1/ns
+total 0
+lrwxrwxrwx 1 root root 0 Apr 17 18:14 ipc -> ipc:[4026531839]
+lrwxrwxrwx 1 root root 0 Apr 17 18:14 mnt -> mnt:[4026531840]
+lrwxrwxrwx 1 root root 0 Apr 17 18:14 net -> net:[4026531956]
+lrwxrwxrwx 1 root root 0 Apr 17 18:14 pid -> pid:[4026531836]
+lrwxrwxrwx 1 root root 0 Apr 17 18:14 uts -> uts:[4026531838]
+# ls -l /proc/2/ns
+total 0
+lrwxrwxrwx 1 root root 0 Apr 17 18:14 ipc -> ipc:[4026531839]
+lrwxrwxrwx 1 root root 0 Apr 17 18:14 mnt -> mnt:[4026531840]
+lrwxrwxrwx 1 root root 0 Apr 17 18:14 net -> net:[4026531956]
+lrwxrwxrwx 1 root root 0 Apr 17 18:14 pid -> pid:[4026531836]
+lrwxrwxrwx 1 root root 0 Apr 17 18:14 uts -> uts:[4026531838]
+```
+
+找一个docker容器，查看容器中进程在root namespace中的pid
+
+```
+# docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+06e57d507c54        nginx               "nginx -g 'daemon off"   About an hour ago   Up About an hour    80/tcp, 443/tcp     elegant_ride
+
+# docker top 06e57d507c54
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                3639                3623                0                   16:28               ?                   00:00:00            nginx: master process nginx -g daemon off;
+104                 3663                3639                0                   16:28               ?                   00:00:00            nginx: worker process
+root                6213                6198                0                   17:19               pts/1               00:00:00            /bin/bash
+```
+
+容器里面两个pid为3639和3663的进程，这两个进程在一个容器里面，所有他们的各个命名空间的编号是一样的；但是和root namespace的编号不一样。  
+
+```
+# ls -l /proc/3639/ns
+total 0
+lrwxrwxrwx 1 root root 0 Apr 17 17:19 ipc -> ipc:[4026532166]
+lrwxrwxrwx 1 root root 0 Apr 17 17:19 mnt -> mnt:[4026532164]
+lrwxrwxrwx 1 root root 0 Apr 17 16:28 net -> net:[4026532169]
+lrwxrwxrwx 1 root root 0 Apr 17 17:19 pid -> pid:[4026532167]
+lrwxrwxrwx 1 root root 0 Apr 17 17:19 uts -> uts:[4026532165]
+
+# ls -l /proc/3663/ns
+total 0
+lrwxrwxrwx 1 104 107 0 Apr 17 18:15 ipc -> ipc:[4026532166]
+lrwxrwxrwx 1 104 107 0 Apr 17 18:15 mnt -> mnt:[4026532164]
+lrwxrwxrwx 1 104 107 0 Apr 17 18:15 net -> net:[4026532169]
+lrwxrwxrwx 1 104 107 0 Apr 17 18:15 pid -> pid:[4026532167]
+lrwxrwxrwx 1 104 107 0 Apr 17 18:15 uts -> uts:[4026532165]
+```
 
 
 
 
 
+## PID(CLONE_NEWPID)
+PID namespace隔离非常使用，它对进程PID重新编号，即两个不同的namespace下的进程可以有相同的PID。 
 
+查看进程的最大编号:  
 
-## PID namespace
-PID namespace隔离非常使用，它对进程PID重新编号，即两个不同的namespace下的进程可以有相同的PID。  
+```
+# cat /proc/sys/kernel/pid_max
+32768
+``` 
 
 ![namespace-pid](resources/namespace-pid.png)
 
@@ -106,7 +167,99 @@ parent namespace中的进程可以看到chilid namespace中的进程，并可以
 * 如果在新的PID namespace中重新挂载了proc文件系统到/proc目录，会发现/proc目录下只显示同属于一个PID namespace中的其他进程
 * 在root namespace中可以看到所有的进程(包括child namespace中的进程，因为child namespace中的进程也在root namespace中有一个全局的PID)
 
+测试代码:  
 
+vi newpid_tutorial.c
+
+```
+#define _GNU_SOURCE
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <stdio.h>
+#include <sched.h>
+#include <signal.h>
+#include <unistd.h>
+#define STACK_SIZE (1024 * 1024)
+
+static char child_stack[STACK_SIZE];
+
+int child_main(void* arg) {
+    printf("The child process pid in child pid namespace is: %d\n", getpid());
+    sleep(60);
+}
+
+int main() {
+    printf("The parent process pid in root pid namespace is: %d\n", getpid());
+    int child_pid = clone(child_main, child_stack+STACK_SIZE, CLONE_NEWPID | SIGCHLD, NULL);
+    printf("The child process pid in root pid namespace is: %d\n", child_pid);
+    waitpid(child_pid, NULL, 0);
+    return 0;
+}
+```
+
+编译运行:  
+
+```
+# gcc newpid_tutorial.c -o newpid_tutorial.bin
+# ./newpid_tutorial.bin
+The parent process pid in root pid namespace is: 7394
+The child process pid in root pid namespace is: 7395
+The child process pid in child pid namespace is: 1
+```
+
+上面代码运行时会sleep 60s，便于我们查看进程的namespace信息(进程结束后就看不到这个进程的namespace信息了):  
+
+```
+# ls -l /proc/1/ns
+total 0
+lrwxrwxrwx 1 root root 0 Apr 18 03:21 ipc -> ipc:[4026531839]
+lrwxrwxrwx 1 root root 0 Apr 18 03:21 mnt -> mnt:[4026531840]
+lrwxrwxrwx 1 root root 0 Apr 18 03:21 net -> net:[4026531956]
+lrwxrwxrwx 1 root root 0 Apr 18 03:21 pid -> pid:[4026531836]
+lrwxrwxrwx 1 root root 0 Apr 18 03:21 uts -> uts:[4026531838]
+# ls -l /proc/7394/ns
+total 0
+lrwxrwxrwx 1 root root 0 Apr 18 04:49 ipc -> ipc:[4026531839]
+lrwxrwxrwx 1 root root 0 Apr 18 04:49 mnt -> mnt:[4026531840]
+lrwxrwxrwx 1 root root 0 Apr 18 04:49 net -> net:[4026531956]
+lrwxrwxrwx 1 root root 0 Apr 18 04:49 pid -> pid:[4026531836]
+lrwxrwxrwx 1 root root 0 Apr 18 04:49 uts -> uts:[4026531838]
+# ls -l /proc/7395/ns
+total 0
+lrwxrwxrwx 1 root root 0 Apr 18 04:49 ipc -> ipc:[4026531839]
+lrwxrwxrwx 1 root root 0 Apr 18 04:49 mnt -> mnt:[4026531840]
+lrwxrwxrwx 1 root root 0 Apr 18 04:49 net -> net:[4026531956]
+lrwxrwxrwx 1 root root 0 Apr 18 04:49 pid -> pid:[4026532157]
+lrwxrwxrwx 1 root root 0 Apr 18 04:49 uts -> uts:[4026531838]
+```
+
+可以发现
+
+* 父进程在root namespace中的pid为7394，7394号进程和root namespace中pid为1的进程，所有的namespace编号都是一样的。
+* 子进程在root namespace中的pid位7395，7395号进程和它的父进程7394号进程，唯一不同的是pid namespace不一样，其他的namespace都是一样的；这是因为在上面的代码中只使用了CLONE_NEWPID，就只会隔离pid namespace
+
+
+
+
+
+## Mount(CLONE_NEWNS)
+由于这是Linux上第一个namespace，所以叫NS；用来隔离文件系统。  
+
+比如在子进程中默认和root namespace共享/proc目录。使用CLONE_NEWNS，在子进程中的mount和umount都只会在子进程中有效。  
+
+https://segmentfault.com/a/1190000006912742
+http://hustcat.github.io/namespace-implement-1/
+
+
+
+## UTS(CLONE_NEWUTS)
+Unix Time-sharing System。
+
+
+
+
+
+# demo
 ### 测试代码
 引用于[http://dockone.io/article/81](http://dockone.io/article/81)
 
@@ -180,7 +333,8 @@ bash: kill: (24608) - No such process
 可以看出打印当前进程编号返回的是1，并且在子进程中看不到父进程了。  
 
 
-但是在子进程中执行ps命令时，看到的还是全局的进程号
+
+但是在子进程中执行ps命令时，看到的还是全局的进程号，如下:  
 
 ```
 [root@In Namespace tutorial]# ps
@@ -193,10 +347,36 @@ bash: kill: (24608) - No such process
 24622 pts/0    00:00:00 ps
 ```
 
+因为ps工具是从/proc目录获取的信息，而/proc还没有被隔离
+
+
+### 隔离fs
+将上面的代码的clone函数中加上CLONE_NEWNS，如下:  
+
+```
+    int child_pid = clone(child_main, child_stack+STACK_SIZE, CLONE_NEWUTS | CLONE_NEWIPC | CLONE_NEWPID | CLONE_NEWNS  | SIGCHLD, NULL);
+```    
+
+重新编译和链接。  
+
+```
+# ./get_pid_namespace.bin
+[root@In Namespace tutorial]# mount -t proc proc /proc
+[root@In Namespace tutorial]# ps -ef
+UID        PID  PPID  C STIME TTY          TIME CMD
+root         1     0  0 16:06 pts/0    00:00:00 /bin/bash
+root        19     1  0 16:08 pts/0    00:00:00 ps -ef
+```   
+
+可以看到ps命令显示的是这个namespace下面的PID了，而不是全局的PID。
+
+
+？？？为什么要mount到/proc，这个root namespace的目录。
 
 
 
 
+# 网络命名空间
 
 
 

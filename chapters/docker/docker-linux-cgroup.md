@@ -1,11 +1,4 @@
 # cgroup
-
-参考地址:  
-
-* [https://access.redhat.com/documentation/zh-CN/Red_Hat_Enterprise_Linux/6/html/Resource_Management_Guide/ch01.html](https://access.redhat.com/documentation/zh-CN/Red_Hat_Enterprise_Linux/6/html/Resource_Management_Guide/ch01.html)
-* [http://www.infoq.com/cn/articles/docker-kernel-knowledge-cgroups-resource-isolation](http://www.infoq.com/cn/articles/docker-kernel-knowledge-cgroups-resource-isolation)
-
-
 ## 简介
 cgroup(全称是control group)，是Linux Kernel(2.6.24中加入)提供的一种限制、记录和隔离进程所使用资源的机制。  
 
@@ -60,12 +53,11 @@ cgroup与进程在以下两点上相似:
 ## hierarchy实践
 上面说的有点抽象，直接看看hierarchy在Linux中的体现:  
 
-在Linux中mount一个cgroup类型的文件系统时，就创建了一个hierarchy，可以使用mount查看系统中的hierarchy:  
+在Linux中mount一个cgroup类型的文件系统时，就创建了一个hierarchy，可以使用mount查看系统中的hierarchy:
 
 ### 查看hierarchy
 ```
-# mount | grep cgroup
-tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,seclabel,mode=755)
+# mount -l -t cgroup
 cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,name=systemd)
 cgroup on /sys/fs/cgroup/cpuset type cgroup (rw,nosuid,nodev,noexec,relatime,cpuset)
 cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,cpuacct,cpu)
@@ -78,7 +70,10 @@ cgroup on /sys/fs/cgroup/perf_event type cgroup (rw,nosuid,nodev,noexec,relatime
 cgroup on /sys/fs/cgroup/hugetlb type cgroup (rw,nosuid,nodev,noexec,relatime,hugetlb)
 ```
 
-除了第一个tmpfs，其它的都是hierarchy。以挂载点/sys/fs/cgroup/memory为例，这个层级挂载在/sys/fs/cgroup/memory目录下，/sys/fs/cgroup/memory目录下的每个目录都是一个cgroup。
+对于cgroup类型的文件系统，通过子系统来区分hierarchy，子系统不一样就是不同的hierarchy。比如/sys/fs/cgroup/systemd是一个层级，/sys/fs/cgroup/memory也是一个层级。
+
+
+以/sys/fs/cgroup/memory这个hierarchy为例，这个hierarchy挂载在/sys/fs/cgroup/memory目录下，层级/sys/fs/cgroup/memory目录下的每个目录都是一个cgroup。
 
 ```
 # tree -d /sys/fs/cgroup/memory/
@@ -106,55 +101,14 @@ cgroup on /sys/fs/cgroup/hugetlb type cgroup (rw,nosuid,nodev,noexec,relatime,hu
 └── user.slice
 ```
 
-比如/sys/fs/cgroup/memory/bar是层级中的一个cgroup；/sys/fs/cgroup/memory/bar/in_bar也是一个cgroup，它是/sys/fs/cgroup/memory/bar的子cgroup。
-
+比如/sys/fs/cgroup/memory/bar是hierarchy中的一个cgroup；/sys/fs/cgroup/memory/bar/in_bar也是一个cgroup，它是/sys/fs/cgroup/memory/bar的子cgroup。
 
 ### 创建hierarchy
+TODO，挂载一个内存子系统，和现有的一样；对比两个目录是否一样。  
+
+禁用子系统后，再在其他的地方挂载看看。
 
 
-
-
-
-
-##ERROR
-下面的理解有误
-
-当mount一个类型为tmpfs的文件系统时(还有一点是在这个文件系统的目录下挂载类型为cgroup类型的文件系统)，就创建了一个层级。  
-### 查看层级
-查看系统中已有的层级:  
-
-```
-# mount | grep tmpfs
-devtmpfs on /dev type devtmpfs (rw,nosuid,seclabel,size=2006596k,nr_inodes=501649,mode=755)
-tmpfs on /dev/shm type tmpfs (rw,nosuid,nodev,seclabel)
-tmpfs on /run type tmpfs (rw,nosuid,nodev,seclabel,mode=755)
-tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,seclabel,mode=755)
-tmpfs on /run/user/985 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=404764k,mode=700,uid=985,gid=982)
-tmpfs on /run/user/995 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=404764k,mode=700,uid=995,gid=993)
-tmpfs on /run/user/987 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=404764k,mode=700,uid=987,gid=984)
-tmpfs on /run/user/1000 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=404764k,mode=700,uid=1000,gid=1000)
-
-# mount | grep cgroup
-tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,seclabel,mode=755)
-cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,name=systemd)
-cgroup on /sys/fs/cgroup/cpuset type cgroup (rw,nosuid,nodev,noexec,relatime,cpuset)
-cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,cpuacct,cpu)
-cgroup on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,memory)
-cgroup on /sys/fs/cgroup/devices type cgroup (rw,nosuid,nodev,noexec,relatime,devices)
-cgroup on /sys/fs/cgroup/freezer type cgroup (rw,nosuid,nodev,noexec,relatime,freezer)
-cgroup on /sys/fs/cgroup/net_cls type cgroup (rw,nosuid,nodev,noexec,relatime,net_cls)
-cgroup on /sys/fs/cgroup/blkio type cgroup (rw,nosuid,nodev,noexec,relatime,blkio)
-cgroup on /sys/fs/cgroup/perf_event type cgroup (rw,nosuid,nodev,noexec,relatime,perf_event)
-cgroup on /sys/fs/cgroup/hugetlb type cgroup (rw,nosuid,nodev,noexec,relatime,hugetlb)
-```
-
-1. 每一个层级都是tmpfs类型的文件系统(但是tmpfs类型的文件系统不一定是一个层级)，所以先用mount | grep tmpfs看看有哪些可能的层级。
-2. 然后使用mount | grep cgroup看看有哪些cgroup类型的文件系统，如果cgroup类型文件系统的挂载点路径包含tmpfs的路径，那对应的tmpfs就是一个层级；
-3. 比如/sys/fs/cgroup/systemd目录挂载的文件系统类型为cgroup，并且/sys/fs/cgroup/systemd包含挂载点为/sys/fs/cgroup的tmpfs类型的文件系统；所以/sys/fs/cgroup是一个层级结构(好比一棵树，可能有多个树)
-
-
-
-### 创建层级
 创建一个层级的方法是创建一个目录，并在上面挂载tmpfs类型的文件系统。  
 
 ```
@@ -216,6 +170,8 @@ hugetlb		10			4				1
 TODO: 各个子系统的作用
 
 
+### 禁用子系统
+
 
 
 # libcgroup
@@ -276,37 +232,7 @@ memory:/system.slice/zookeeper-server.service
 
 
 
-
-
-
-
-
-
-
-
-
-cgcreate
-
-
-cgdelete
-
-
-
-
-
-
-
-
-
-
-
 # /sys/fs/cgroup
-
-
-
-
-
-
 创建控制组
 
 ```
@@ -422,6 +348,9 @@ root     15599 15583  0 15:33 ?        Ss     0:00 nginx: master process nginx -
 ```
 
 
+# 参考地址
 
+* [https://access.redhat.com/documentation/zh-CN/Red_Hat_Enterprise_Linux/6/html/Resource_Management_Guide/ch01.html](https://access.redhat.com/documentation/zh-CN/Red_Hat_Enterprise_Linux/6/html/Resource_Management_Guide/ch01.html)
+* [http://www.infoq.com/cn/articles/docker-kernel-knowledge-cgroups-resource-isolation](http://www.infoq.com/cn/articles/docker-kernel-knowledge-cgroups-resource-isolation)
 
 
