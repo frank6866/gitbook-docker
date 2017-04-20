@@ -1,4 +1,4 @@
-# unshare
+# 使用unshare理解Namespace
 unshare - run program with some namespaces unshared from parent.
 
 **unshare()系统调用**用于将当前进程和所在的namespace分离并且加入到新创建的namespace之中。

@@ -279,6 +279,69 @@ Options:
 ```
 
 
+## docker commit(用容器制作镜像)
+### usage
+```
+# docker commit --help
+
+Usage:	docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
+
+Create a new image from a container's changes
+
+Options:
+  -a, --author string    Author (e.g., "John Hannibal Smith <hannibal@a-team.com>")
+  -c, --change value     Apply Dockerfile instruction to the created image (default [])
+      --help             Print usage
+  -m, --message string   Commit message
+  -p, --pause            Pause container during commit (default true)
+```
+
+### demo
+用nginx镜像启动一个容器,容器id为4281fb8cb2aa8e648eaa3a5145b37e74d6397f89df238248a98e1ed4ff8ced63,如下:
+
+```
+# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+docker.io/mysql     latest              d5127813070b        7 days ago          407.1 MB
+docker.io/nginx     latest              5766334bdaa0        12 days ago         182.5 MB
+docker.io/busybox   latest              00f017a8c2a6        5 weeks ago         1.11 MB
+
+# docker run -d nginx
+4281fb8cb2aa8e648eaa3a5145b37e74d6397f89df238248a98e1ed4ff8ced63
+```
+
+使用exec进入容器,在容器内部创建一个文件:
+
+```
+# docker exec -it 4281fb /bin/bash
+root@4281fb8cb2aa:/# echo changed > added_file.txt
+root@4281fb8cb2aa:/# exit
+exit
+```
+
+使用运行中的容器4281fb8cb2aa8e648eaa3a5145b37e74d6397f89df238248a98e1ed4ff8ced63创建一个镜像,镜像id为f48aed293fde
+
+```
+# docker commit 4281fb
+sha256:f48aed293fde39664d56aab9807c85f9fb5eb31b4f3b2907356cd2d3a914200a
+
+# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+<none>              <none>              f48aed293fde        7 seconds ago       182.5 MB
+docker.io/mysql     latest              d5127813070b        7 days ago          407.1 MB
+docker.io/nginx     latest              5766334bdaa0        12 days ago         182.5 MB
+docker.io/busybox   latest              00f017a8c2a6        5 weeks ago         1.11 MB
+```
+
+以刚创建的镜像启动一个容器,发现添加的文件在容器里面了。
+
+```
+# docker run -it f48aed293fde /bin/bash
+root@81e1f15275df:/# cat added_file.txt
+changed
+```
+
+
 ## docker push(推送镜像)
 ### usage
 
@@ -286,23 +349,66 @@ Options:
 
 ## docker build(打包镜像)
 ### usage
+```
+# docker build --help
+
+Usage:	docker build [OPTIONS] PATH | URL | -
+
+Build an image from a Dockerfile
+
+Options:
+      --build-arg value         Set build-time variables (default [])
+      --cgroup-parent string    Optional parent cgroup for the container
+      --cpu-period int          Limit the CPU CFS (Completely Fair Scheduler) period
+      --cpu-quota int           Limit the CPU CFS (Completely Fair Scheduler) quota
+  -c, --cpu-shares int          CPU shares (relative weight)
+      --cpuset-cpus string      CPUs in which to allow execution (0-3, 0,1)
+      --cpuset-mems string      MEMs in which to allow execution (0-3, 0,1)
+      --disable-content-trust   Skip image verification (default true)
+  -f, --file string             Name of the Dockerfile (Default is 'PATH/Dockerfile')
+      --force-rm                Always remove intermediate containers
+      --help                    Print usage
+      --isolation string        Container isolation technology
+      --label value             Set metadata for an image (default [])
+  -m, --memory string           Memory limit
+      --memory-swap string      Swap limit equal to memory plus swap: '-1' to enable unlimited swap
+      --no-cache                Do not use cache when building the image
+      --pull                    Always attempt to pull a newer version of the image
+  -q, --quiet                   Suppress the build output and print image ID on success
+      --rm                      Remove intermediate containers after a successful build (default true)
+      --shm-size string         Size of /dev/shm, default value is 64MB
+  -t, --tag value               Name and optionally a tag in the 'name:tag' format (default [])
+      --ulimit value            Ulimit options (default [])
+  -v, --volume value            Set build-time bind mounts (default [])
+```
 
 ### demo
+```
+
+```
 
 ## docker login(登录registry)
 ### usage
+```
+
+```
+
 
 ### demo
+```
 
+```
 
 ## docker logout(退出registry)
 ### usage
+```
 
-
+```
 
 ### demo
+```
 
-
+```
 
 
 # 容器管理
