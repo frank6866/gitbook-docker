@@ -22,6 +22,20 @@ Docker通过unionfs将不同层的文件系统union起来,构成了Docker的分�
 unionfs的实现技术除了aufs,还包括VFS、Btrfs、和DeviceMapper等。
 
 
+## 镜像命名格式
+registry/namespace/image-name:tag
+
+比如:
+
+docker.io/centos:7.1.1503
+
+* docker.io是registry
+* centos是镜像名称
+* 7.1.1503是tag
+
+namespace一般可以忽略
+
+
 ## 查看镜像的层级
 ### docker pull
 docker pull的时候，是一层层pull的，比如，pull一个nginx镜像:  

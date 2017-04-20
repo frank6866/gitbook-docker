@@ -691,100 +691,11 @@ Dockerfile
 docker build
 
 
-
-## 
-### 格式
-
-```
-
-```
-
-### demo
-Dockerfile 
-
-```
-
-```
-
-docker build
-
-
-
-## 
-### 格式
-
-```
-
-```
-
-### demo
-Dockerfile 
-
-```
-
-```
-
-docker build
-
-
-
-## 
-### 格式
-
-```
-
-```
-
-### demo
-Dockerfile 
-
-```
-
-```
-
-docker build
-
-
-
-## 
-### 格式
-
-```
-
-```
-
-### demo
-Dockerfile 
-
-```
-
-```
-
-docker build
-
-
-
-
-
-
 # 参考
+* https://docs.docker.com/engine/reference/builder
 * https://yeasy.gitbooks.io/docker_practice/content/image/build.html
 * https://hujb2000.gitbooks.io/docker-flow-evolution/content/cn/basis/dockerfiledetail.html
 * https://hujb2000.gitbooks.io/docker-flow-evolution/content/cn/basis/dockerfiledetail.html
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
