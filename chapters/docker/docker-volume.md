@@ -153,6 +153,7 @@ docker rm时使用-v选项，会删除对应的数据卷目录(**经测试，如
 再尝试直接挂载docker容器到nfs、glusterfs、cephfs。
 
 
+https://frank6866.gitbooks.io/linux/content/chapters/io/linux-io-nfs.html
 
 
 
