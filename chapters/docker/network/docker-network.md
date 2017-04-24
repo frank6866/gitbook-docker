@@ -36,7 +36,7 @@ supports-priv-flags: no
 * container模式
 * none模式
 
-
+在一个宿主机上,不同的网络模式可以共存。
 
 
 
@@ -174,7 +174,7 @@ c6fad6d5
 
 # 参考
 * docker命名空间在ip netns list里面看不到的问题: http://stackoverflow.com/questions/31265993/docker-networking-namespace-not-visible-in-ip-netns-list
-
+* http://blog.daocloud.io/docker-source-code-analysis-part7-first/
 
 
 
