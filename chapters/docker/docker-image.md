@@ -27,13 +27,12 @@ registry/namespace/image-name:tag
 
 比如:
 
-docker.io/centos:7.1.1503
+gcr.io/google-samples/node-hello:1.0
 
-* docker.io是registry
-* centos是镜像名称
-* 7.1.1503是tag
-
-namespace一般可以忽略
+* registry: 比如上面的gcr.io。如果registry部分没有,默认是docker.io
+* namespace: 比如上面的google-samples。namespace可以没有
+* name: 镜像名称,比如上面的node-hello,必须要有
+* tag: 镜像tag,比如上面的1.0,如果没有,默认为latest
 
 
 ## 查看镜像的层级

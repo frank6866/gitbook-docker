@@ -25,12 +25,21 @@
 -----
 * [kubernetes](chapters/kubernetes/kubernetes-introduction.md)
     * [安装](chapters/kubernetes/kubernetes-install.md)
-    * [简单玩一下](chapters/kubernetes/kubernetes-tutorial.md)
+    * tutorial
+        * [deployment tutorial](chapters/kubernetes/tutorial/kubernetes-deployment-tutorial.md)
+        * [service tutorial](chapters/kubernetes/tutorial/kubernetes-service-tutorial.md)
+        * [external ip tutorial](chapters/kubernetes/tutorial/kubernetes-external-ip-tutorial.md)
     * [kubectl](chapters/kubernetes/kubernetes-kubectl.md)
+        * [kubectl get](chapters/kubernetes/kubectl/kubernetes-kubectl-get.md)
+        * [kubectl delete](chapters/kubernetes/kubectl/kubernetes-kubectl-delete.md)
+        * [kubectl describe](chapters/kubernetes/kubectl/kubernetes-kubectl-delete.md)
+        * [kubectl run](chapters/kubernetes/kubectl/kubernetes-kubectl-run.md)
     * [配置](chapters/kubernetes/kubernetes-configuration.md)
     * [日志](chapters/kubernetes/kubernetes-logging.md)
     * [监控](chapters/kubernetes/kubernetes-monitor.md)
     * [异常整理](chapters/kubernetes/kubernetes-exception.md)
+    * Task
+        * [web ui](chapters/kubernetes/task/kubernetes-task-webui.md)
 
 -----
 * [openshift](chapters/openshift/openshift-intro.md)
