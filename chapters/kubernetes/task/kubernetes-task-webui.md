@@ -6,6 +6,8 @@
 
 vi kubernetes-dashboard.yaml
 
+配置--apiserver-host可以避免后面的异常
+
 ```
 # Copyright 2015 Google Inc. All Rights Reserved.
 #
@@ -65,7 +67,6 @@ spec:
           # If not specified, Dashboard will attempt to auto discover the API server and connect
           # to it. Uncomment only if the default does not work.
           # - --apiserver-host=http://my-address:port
-          - --apiserver-host=http://10.12.10.209:8080
         livenessProbe:
           httpGet:
             path: /
@@ -129,7 +130,10 @@ Error from server: Get https://10.12.10.200:10250/containerLogs/kube-system/kube
 
 然后重启kubelet
 
-systemctl restart kubelet
+```
+# systemctl restart kubelet
+```
+
 
 再查看日志:  
 

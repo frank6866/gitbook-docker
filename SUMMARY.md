@@ -25,6 +25,7 @@
 -----
 * [kubernetes](chapters/kubernetes/kubernetes-introduction.md)
     * [安装](chapters/kubernetes/kubernetes-install.md)
+    * [认证](chapters/kubernetes/kubernetes-authentication.md)
     * tutorial
         * [deployment tutorial](chapters/kubernetes/tutorial/kubernetes-deployment-tutorial.md)
         * [service tutorial](chapters/kubernetes/tutorial/kubernetes-service-tutorial.md)
