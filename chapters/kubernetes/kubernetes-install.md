@@ -276,7 +276,8 @@ flannel配置文件的路径是**/etc/sysconfig/flanneld**，需要修改两个�
 * FLANNEL_ETCD_PREFIX: etcd config key.  This is the configuration key that flannel queries for address range assignment.这是flannel查询etcd中保存的网络信息使用的key，本例中值设置为上面创建的/coreos.com/network
 
 
-修改后配置文件如下（注意，所有的node结点都需要修改）:
+修改后配置文件如下（注意，所有的node结点都需要修改:
+
 ```
 $ grep -v '^#\|^$' /etc/sysconfig/flanneld
 FLANNEL_ETCD_ENDPOINTS="http://10.12.10.209:2379,http://10.12.10.200:2379,http://10.12.10.210:2379"
@@ -300,5 +301,13 @@ master结点上验证
 $ kubectl cluster-info
 Kubernetes master is running at http://localhost:8080
 ```
+
+
+# kubernetes使用https访问etcd
+假设有一套已经配置好TLS的etcd集群
+
+
+
+
 
 

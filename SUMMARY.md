@@ -21,6 +21,7 @@
     * [Docker网络](chapters/docker/network/docker-network.md)
         * [bridge模式](chapters/docker/network/docker-network-bridge.md)
         * [host模式](chapters/docker/network/docker-network-host.md)
+        * [Flannel](chapters/docker/network/docker-network-flannel.md)
 
 -----
 * [kubernetes](chapters/kubernetes/kubernetes-introduction.md)
