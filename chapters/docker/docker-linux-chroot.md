@@ -39,7 +39,7 @@ If no command is given, run '${SHELL} -i' (default: '/bin/sh -i').
 ## demo
 测试环境为CentOS7.1。
 
-这里以busybox(busybox的使用参见[https://frank6866.gitbooks.io/docker/content/chapters/docker/docker-busybox.html](https://frank6866.gitbooks.io/docker/content/chapters/docker/docker-busybox.html))为例子，
+这里以busybox(busybox的使用参见[https://docker.frank6866.com/chapters/docker/docker-busybox.html](https://docker.frank6866.com/chapters/docker/docker-busybox.html))为例子，
 
 
 ```
