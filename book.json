@@ -2,27 +2,15 @@
   "plugins": [
     "-disqus",
     "-sharing",
-    "sitemap",
-    "analytics",
     "github-buttons"
   ],
   "pluginsConfig": {
-    "disqus": {
-      "shortName": "frank6866"
-    },
-    "sitemap": {
-      "hostname": "https://docker.frank6866.com/"
-    },
     "github-buttons": {
       "repo": "frank6866/gitbook-docker",
       "types": [
         "star"
       ],
       "size": "small"
-    },
-    "analytics": {
-      "google": "UA-99319555-4",
-      "baidu": "b211b2003db1508c8b17ddc38f98e416"
     }
   }
 }

@@ -2,7 +2,7 @@
 ## unionfs
 Docker的镜像用到unionfs(联合文件系统)。 
 
-unionfs的tutorial,参考这篇文件: [https://linux.frank6866.com/chapters/io/linux-io-unionfs.html](https://linux.frank6866.com/chapters/io/linux-io-unionfs.html)。
+unionfs的tutorial,参考这篇文件: [https://frank6866.gitbooks.io/linux/content/chapters/io/linux-io-unionfs.html](https://frank6866.gitbooks.io/linux/content/chapters/io/linux-io-unionfs.html)。
 
 ## Docker镜像
 Docker镜像代表了某个时间点文件系统的快照，Docker镜像包含了启动Docker容器所需要的文件系统结构及其内容。  
